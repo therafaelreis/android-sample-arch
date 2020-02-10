@@ -35,7 +35,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
         observeViewModel()
     }
 
-    fun observeViewModel(){
+    private fun observeViewModel(){
         arguments?.let {
             car = DetailFragmentArgs.fromBundle(it).car
         }
@@ -43,6 +43,6 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
         tv_car_name.text  = car.name
         tv_year.text = car.year
         tv_make.text = car.make
-        tv_millage.text = car.milage
+        tv_millage.text = car.millage
     }
 }

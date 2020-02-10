@@ -30,22 +30,31 @@ class ListFragment : Fragment(R.layout.fragment_list) {
             adapter = carListAdapter
         }
 
+        refresh_layout.setOnRefreshListener {
+            rv_list.visibility = View.GONE
+            tv_error.visibility = View.GONE
+            pb_loading.visibility = View.VISIBLE
+            viewModel.refresh()
+            refresh_layout.isRefreshing = false
+        }
+
+
         observeViewModel()
     }
 
     private fun observeViewModel() {
-        viewModel.cars.observe(this, Observer { cars ->
+        viewModel.cars.observe(viewLifecycleOwner, Observer { cars ->
             rv_list.visibility = View.VISIBLE
             carListAdapter.updateCarList(cars)
         })
 
-        viewModel.carsLoadError.observe(this, Observer { isError ->
+        viewModel.carsLoadError.observe(viewLifecycleOwner, Observer { isError ->
             isError?.let {
                 tv_error.visibility = if (it) View.VISIBLE else View.GONE
             }
         })
 
-        viewModel.loading.observe(this, Observer { isLoading ->
+        viewModel.loading.observe(viewLifecycleOwner, Observer { isLoading ->
             isLoading?.let {
                 pb_loading.visibility = if (it) View.VISIBLE else View.GONE
 

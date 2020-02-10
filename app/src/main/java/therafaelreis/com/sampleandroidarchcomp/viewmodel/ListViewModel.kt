@@ -2,7 +2,12 @@ package therafaelreis.com.sampleandroidarchcomp.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.observers.DisposableSingleObserver
+import io.reactivex.schedulers.Schedulers
 import therafaelreis.com.sampleandroidarchcomp.model.Car
+import therafaelreis.com.sampleandroidarchcomp.network.CarService
 
 class ListViewModel : ViewModel() {
 
@@ -14,16 +19,37 @@ class ListViewModel : ViewModel() {
     //notify when the system is loading
     val loading = MutableLiveData<Boolean>()
 
-    fun refresh() {
-        val listOfCars = arrayListOf(
-            Car("1", "BMW 428i", "2016", "BMW", "10k", ""),
-            Car("2", "BMW M6", "2020", "BMW", "20k", ""),
-            Car("3", "BMW 533i", "2018", "BMW", "30k", "")
-        )
+    private val carService = CarService()
+    private val disposable = CompositeDisposable()
 
-        cars.value = listOfCars
-        carsLoadError.value = false
-        loading.value = false
+    fun refresh() {
+        fetchRemote()
     }
 
+    private fun fetchRemote() {
+        loading.value = true
+
+        disposable.add(
+            carService.retrieveCars().subscribeOn(Schedulers.newThread()).observeOn(
+                AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableSingleObserver<List<Car>>(){
+                    override fun onSuccess(listOfCar: List<Car>) {
+                        cars.value = listOfCar
+                        carsLoadError.value = false
+                        loading.value = false
+                    }
+
+                    override fun onError(e: Throwable) {
+                        carsLoadError.value = true
+                        loading.value = false
+                        e.printStackTrace()
+                    }
+                })
+        )
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        disposable.clear()
+    }
 }
