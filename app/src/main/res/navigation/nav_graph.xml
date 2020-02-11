@@ -24,11 +24,8 @@
             android:id="@+id/action_detailFragment_to_listFragment"
             app:destination="@id/listFragment" />
         <argument
-            android:name="carUIID"
+            android:name="carUuid"
             android:defaultValue="0"
             app:argType="integer" />
-        <argument
-            android:name="car"
-            app:argType="therafaelreis.com.sampleandroidarchcomp.model.Car" />
     </fragment>
 </navigation>

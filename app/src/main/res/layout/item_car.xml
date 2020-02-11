@@ -1,13 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="car"
+            type="therafaelreis.com.sampleandroidarchcomp.model.Car" />
+
+        <variable
+            name="listener"
+            type="therafaelreis.com.sampleandroidarchcomp.view.CarClickListener" />
+    </data>
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:onClick="@{listener::onCarClicked}"
         android:layout_height="125dp"
         android:orientation="horizontal">
 
+        <TextView
+            android:id="@+id/carId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="@{String.valueOf(car.uuid)}"
+            />
+
         <ImageView
             android:id="@+id/iv_image_item"
+            android:imageUrl="@{car.imageUrl}"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
@@ -26,15 +46,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/Title"
-                android:text="BMW 428i"/>
+                android:text="@{car.name}"
+                tools:ignore="HardcodedText" />
 
             <TextView
                 android:id="@+id/tv_year"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/Text"
-                android:text="2016"/>
-
+                android:text="@{car.year}"/>
         </LinearLayout>
     </LinearLayout>
 </layout>

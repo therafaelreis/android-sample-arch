@@ -23,7 +23,7 @@ class ListFragment : Fragment(R.layout.fragment_list) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProviders.of(this).get(ListViewModel::class.java)
-        viewModel.refresh()
+        viewModel.refreshFromCache()
 
         view.rv_list.apply {
             layoutManager = LinearLayoutManager(context)
