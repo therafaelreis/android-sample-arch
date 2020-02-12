@@ -12,7 +12,9 @@ import kotlinx.coroutines.launch
 import therafaelreis.com.sampleandroidarchcomp.dao.CarDatabase
 import therafaelreis.com.sampleandroidarchcomp.model.Car
 import therafaelreis.com.sampleandroidarchcomp.network.CarService
+import therafaelreis.com.sampleandroidarchcomp.util.NotificationHelper
 import therafaelreis.com.sampleandroidarchcomp.util.SharedPreferencesHelper
+import java.lang.NumberFormatException
 
 class ListViewModel(application: Application) : BaseViewModel(application) {
 
@@ -32,10 +34,10 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
     // 1000 = milliseconds
     // 1000 = microseconds
     // 1000 = nano seconds
-    // 5 minutes
     private var refreshTimeInNanoSeconds = 5 * 60 * 1000 * 1000 * 1000L
 
     fun refreshFromCache() {
+        checkCacheDuration()
         val updateTime = prefsHelper.getUpdateTime()
         if (updateTime != null
             && updateTime != 0L
@@ -49,6 +51,17 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
 
     fun refresh(){
         fetchRemote()
+    }
+
+    private fun checkCacheDuration(){
+        val cachedPreference = prefsHelper.getCacheDuration()
+
+        try{
+            val cachedPreferenceInt = cachedPreference?.toInt() ?: 5 * 60
+            refreshTimeInNanoSeconds = cachedPreferenceInt.times(1000 * 1000 * 1000L)
+        }catch (e: NumberFormatException){
+            e.printStackTrace()
+        }
     }
 
     private fun fetchRemote() {
@@ -66,6 +79,7 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
                             "Car Retrieved from remote",
                             Toast.LENGTH_SHORT
                         ).show()
+                        NotificationHelper(getApplication()).createNotification()
                     }
 
                     override fun onError(e: Throwable) {

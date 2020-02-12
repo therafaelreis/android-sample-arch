@@ -6,7 +6,7 @@ import therafaelreis.com.sampleandroidarchcomp.model.Car
 
 
 interface CarApi{
-
-    @GET("bins/s42go")
+    
+    @GET("bins/1b8onw")
     fun retrieveCars() : Single<List<Car>>
 }
